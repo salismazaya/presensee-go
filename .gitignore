@@ -1,0 +1,35 @@
+# Binaries
+presensee
+*.exe
+
+# Database files
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Environment
+.env
+
+# Frontend build & deps
+frontend/node_modules/
+frontend/dist/
+
+# Go
+vendor/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Media uploads
+media/
+
+# Test artifacts
+test_*.db
