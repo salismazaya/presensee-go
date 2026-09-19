@@ -12,7 +12,7 @@ import (
 	"presensee/internal/handler/api"
 	"presensee/internal/handler/setup"
 	"presensee/internal/middleware"
-	"presensee/internal/model"
+	"presensee/internal/migration"
 
 	"github.com/go-chi/chi/v5"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
@@ -35,8 +35,8 @@ func main() {
 		log.Fatalf("Database connection error: %v", err)
 	}
 
-	// Auto-migrate schema on start
-	if err := model.AutoMigrate(db); err != nil {
+	// Run SQL migrations on start
+	if err := migration.MigrateUp(db); err != nil {
 		log.Fatalf("Database migration error: %v", err)
 	}
 

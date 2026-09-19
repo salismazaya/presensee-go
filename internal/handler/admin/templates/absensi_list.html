@@ -1,0 +1,67 @@
+{{define "content"}}
+<div class="row mb-3">
+    <div class="col-12">
+        <p class="text-muted mb-0">Lihat rekaman absensi harian per kelas</p>
+    </div>
+</div>
+
+<!-- Filter -->
+<div class="card">
+    <div class="card-body">
+        <form method="GET" class="row align-items-end">
+            <div class="col-md-3 form-group mb-md-0">
+                <label class="text-sm">Pilih Tanggal</label>
+                <input type="date" name="date" value="{{.SelectedDate}}" class="form-control form-control-sm">
+            </div>
+            <div class="col-md-3 form-group mb-md-0">
+                <label class="text-sm">Pilih Kelas</label>
+                <select name="kelas_id" class="form-control form-control-sm">
+                    <option value="">Semua Kelas</option>
+                    {{range .Kelass}}
+                    <option value="{{.ID}}" {{if eq $.SelectedKelasID (printf "%d" .ID)}}selected{{end}}>{{.Name}}</option>
+                    {{end}}
+                </select>
+            </div>
+            <div class="col-md-3 form-group mb-md-0">
+                <button type="submit" class="btn btn-sm btn-primary">Tampilkan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body table-responsive p-0">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Siswa</th>
+                    <th>Kelas</th>
+                    <th>Status Absensi</th>
+                    <th>Diabsen Oleh</th>
+                    <th>Waktu Update</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Absensies}}
+                <tr>
+                    <td><strong>{{.Siswa.FullName}}</strong></td>
+                    <td>{{.Siswa.Kelas.Name}}</td>
+                    <td>
+                        {{if eq .Status "hadir"}}<span class="badge badge-success">Hadir</span>{{end}}
+                        {{if eq .Status "sakit"}}<span class="badge badge-warning">Sakit</span>{{end}}
+                        {{if eq .Status "izin"}}<span class="badge badge-info">Izin</span>{{end}}
+                        {{if eq .Status "alfa"}}<span class="badge badge-danger">Alfa</span>{{end}}
+                        {{if eq .Status "bolos"}}<span class="badge badge-secondary">Bolos</span>{{end}}
+                        {{if eq .Status "tunggu"}}<span class="badge badge-light border">Menunggu</span>{{end}}
+                    </td>
+                    <td>{{if .By}}{{.By.DisplayName}}{{else}}-{{end}}</td>
+                    <td class="text-muted text-sm">{{.UpdatedAt.Format "15:04:05"}}</td>
+                </tr>
+                {{else}}
+                <tr><td colspan="5" class="text-center text-muted py-4">Belum ada data absensi untuk tanggal ini</td></tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{end}}

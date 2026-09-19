@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Kartu Siswa</title>
+    <style>
+        @page { size: A4; margin: 10mm; }
+        body { font-family: 'Source Sans Pro', Arial, sans-serif; margin: 0; padding: 10mm; background: #f4f6f9; }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .card {
+            width: 85.6mm; height: 53.98mm;
+            background: white; border: 1.5px solid #007bff; border-radius: 6px;
+            padding: 12px; box-sizing: border-box;
+            display: flex; flex-direction: column; justify-content: space-between;
+            page-break-inside: avoid;
+        }
+        .header {
+            font-size: 11px; font-weight: 700; color: #007bff;
+            border-bottom: 2px solid #007bff; padding-bottom: 4px;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .name { font-size: 14px; font-weight: 700; margin-top: 6px; }
+        .info { font-size: 10px; color: #555; }
+        .footer-label { font-size: 9px; color: #999; text-align: right; }
+        @media print {
+            body { background: none; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid">
+        {{range .Siswas}}
+        <div class="card">
+            <div class="header">{{$.DataSekolah.NamaSekolah}}</div>
+            <div>
+                <div class="name">{{.FullName}}</div>
+                <div class="info">Kelas: {{.Kelas.Name}}</div>
+                <div class="info">NIS: {{.NIS}} | NISN: {{.NISN}}</div>
+            </div>
+            <div class="footer-label">KARTU PELAJAR</div>
+        </div>
+        {{end}}
+    </div>
+</body>
+</html>

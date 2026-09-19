@@ -1,0 +1,96 @@
+{{define "content"}}
+<div class="row mb-3">
+    <div class="col-sm-6">
+        <p class="text-muted mb-0">Kelola kelas, wali kelas, dan kenaikan kelas</p>
+    </div>
+    <div class="col-sm-6 text-right">
+        <a href="/admin/kelas/create" class="btn btn-primary"><i class="fas fa-plus mr-1"></i> Tambah Kelas</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body table-responsive p-0">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nama Kelas</th>
+                    <th>Wali Kelas</th>
+                    <th>Sekretaris</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Kelass}}
+                <tr>
+                    <td>{{.ID}}</td>
+                    <td><strong>{{.Name}}</strong></td>
+                    <td>
+                        {{if .WaliKelas}}{{.WaliKelas.DisplayName}}{{else}}<span class="text-muted">-</span>{{end}}
+                    </td>
+                    <td>
+                        {{range .Sekretaris}}
+                            <span class="badge badge-info">{{.DisplayName}}</span>
+                        {{else}}
+                            <span class="text-muted">-</span>
+                        {{end}}
+                    </td>
+                    <td>
+                        {{if .Active}}
+                            <span class="badge badge-success">Aktif</span>
+                        {{else}}
+                            <span class="badge badge-secondary">Tidak Aktif</span>
+                        {{end}}
+                    </td>
+                    <td>
+                        <a href="/admin/kelas/{{.ID}}/edit" class="btn btn-sm btn-outline-primary mr-1">Edit</a>
+                        <button onclick="triggerNaikKelas({{.ID}}, '{{.Name}}')" class="btn btn-sm btn-outline-warning">Naik Kelas</button>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function triggerNaikKelas(oldKelasId, oldKelasName) {
+    Swal.fire({
+        title: 'Naik Kelas: ' + oldKelasName,
+        text: 'Masukkan nama kelas baru untuk memindahkan seluruh siswa:',
+        input: 'text',
+        showCancelButton: true,
+        confirmButtonText: 'Proses Naik Kelas',
+        cancelButtonText: 'Batal',
+        showLoaderOnConfirm: true,
+        preConfirm: async (newKelasName) => {
+            if (!newKelasName) {
+                Swal.showValidationMessage('Nama kelas baru wajib diisi');
+                return;
+            }
+            try {
+                const res = await fetch('/admin/naik-kelas', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ old_kelas_id: oldKelasId, new_kelas_name: newKelasName })
+                });
+                const txt = await res.text();
+                if (txt === 'NOT_OK') {
+                    throw new Error('Gagal memproses naik kelas');
+                }
+                return txt;
+            } catch (err) {
+                Swal.showValidationMessage(err.message);
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire('Berhasil!', 'Siswa berhasil dipindahkan ke kelas baru.', 'success').then(() => {
+                window.location.reload();
+            });
+        }
+    });
+}
+</script>
+{{end}}

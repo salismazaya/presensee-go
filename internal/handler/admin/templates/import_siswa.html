@@ -1,0 +1,37 @@
+{{define "content"}}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">Import Siswa dari Excel</h3>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">Unggah berkas spreadsheet (.xlsx) dengan kolom: Nama, Kelas, NIS, NISN</p>
+                {{if .SuccessMsg}}
+                <div class="alert alert-success alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{.SuccessMsg}}
+                </div>
+                {{end}}
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label>Pilih File .xlsx</label>
+                        <div class="custom-file">
+                            <input type="file" name="excel_file" accept=".xlsx" required class="custom-file-input" id="excelFile">
+                            <label class="custom-file-label" for="excelFile">Pilih file...</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Unggah &amp; Proses Import</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(function(){
+    $('.custom-file-input').on('change', function(){
+        $(this).next('.custom-file-label').html(this.files[0].name);
+    });
+});
+</script>
+{{end}}

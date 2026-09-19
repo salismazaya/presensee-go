@@ -1,0 +1,57 @@
+{{define "content"}}
+<div class="row">
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>{{.TotalSiswa}}</h3>
+                <p>Total Siswa</p>
+            </div>
+            <div class="icon"><i class="fas fa-user-graduate"></i></div>
+            <a href="/admin/siswa" class="small-box-footer">Lihat Detail <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>{{.TotalKelas}}</h3>
+                <p>Kelas Aktif</p>
+            </div>
+            <div class="icon"><i class="fas fa-school"></i></div>
+            <a href="/admin/kelas" class="small-box-footer">Lihat Detail <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>{{.TotalUser}}</h3>
+                <p>Total Pengguna</p>
+            </div>
+            <div class="icon"><i class="fas fa-users"></i></div>
+            <a href="/admin/users" class="small-box-footer">Lihat Detail <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-danger">
+            <div class="inner">
+                <h3>{{.TotalAbsensiToday}}</h3>
+                <p>Absensi Hari Ini</p>
+            </div>
+            <div class="icon"><i class="fas fa-clipboard-list"></i></div>
+            <a href="/admin/absensi" class="small-box-footer">Lihat Detail <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title"><i class="fas fa-bolt mr-1"></i> Aksi Cepat</h3>
+    </div>
+    <div class="card-body">
+        <a href="/admin/import-siswa" class="btn btn-primary mr-2 mb-2"><i class="fas fa-file-import mr-1"></i> Import Siswa (Excel)</a>
+        <a href="/admin/export-absensi" class="btn btn-outline-primary mr-2 mb-2"><i class="fas fa-file-export mr-1"></i> Export Rekap Absensi</a>
+        <a href="/admin/kelas/create" class="btn btn-outline-secondary mr-2 mb-2">Tambah Kelas</a>
+        <a href="/admin/siswa/create" class="btn btn-outline-secondary mr-2 mb-2">Tambah Siswa</a>
+        <a href="/admin/users/create" class="btn btn-outline-secondary mr-2 mb-2">Tambah Pengguna</a>
+    </div>
+</div>
+{{end}}

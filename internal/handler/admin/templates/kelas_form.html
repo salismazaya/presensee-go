@@ -1,0 +1,38 @@
+{{define "content"}}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">{{.Title}}</h3>
+            </div>
+            <form method="POST">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Nama Kelas</label>
+                        <input type="text" name="name" value="{{.Kelas.Name}}" required class="form-control" placeholder="Contoh: XII IPA 1">
+                    </div>
+                    <div class="form-group">
+                        <label>Wali Kelas</label>
+                        <select name="wali_kelas_id" class="form-control">
+                            <option value="0">---- Tidak Ada ----</option>
+                            {{range .WaliUsers}}
+                            <option value="{{.ID}}" {{if and $.Kelas.WaliKelasID (eq (derefUint $.Kelas.WaliKelasID) .ID)}}selected{{end}}>{{.DisplayName}} (@{{.Username}})</option>
+                            {{end}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" name="active" id="active" {{if .Kelas.Active}}checked{{end}} class="custom-control-input">
+                            <label class="custom-control-label" for="active">Kelas Aktif</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-right">
+                    <a href="/admin/kelas" class="btn btn-default mr-2">Batal</a>
+                    <button type="submit" class="btn btn-primary">Simpan Kelas</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{end}}

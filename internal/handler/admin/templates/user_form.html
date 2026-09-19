@@ -1,0 +1,64 @@
+{{define "content"}}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">{{.Title}}</h3>
+            </div>
+            <form method="POST">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" name="username" value="{{.User.Username}}" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Lengkap</label>
+                        <input type="text" name="full_name" value="{{.User.FullName}}" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Password {{if not .IsNew}}<small class="text-muted">(Kosongkan jika tidak ingin mengubah)</small>{{end}}</label>
+                        <input type="password" name="password" {{if .IsNew}}required{{end}} class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Tipe Pengguna</label>
+                        <select name="type" id="user-type" class="form-control">
+                            <option value="----">----</option>
+                            <option value="wali_kelas" {{if and .User.Type (eq (derefUserType .User.Type) "wali_kelas")}}selected{{end}}>Wali Kelas</option>
+                            <option value="sekretaris" {{if and .User.Type (eq (derefUserType .User.Type) "sekretaris")}}selected{{end}}>Sekretaris</option>
+                            <option value="kesiswaan" {{if and .User.Type (eq (derefUserType .User.Type) "kesiswaan")}}selected{{end}}>Kesiswaan</option>
+                            <option value="guru_piket" {{if and .User.Type (eq (derefUserType .User.Type) "guru_piket")}}selected{{end}}>Guru Piket</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="kelas-group">
+                        <label>Kelas Terkait</label>
+                        <select name="kelas_id" class="form-control">
+                            <option value="----">----</option>
+                            {{range .Kelass}}
+                            <option value="{{.ID}}" {{if eq $.SelectedKelasID .ID}}selected{{end}}>{{.Name}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                    <hr>
+                    <h6>Hak Akses</h6>
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" name="is_staff" id="is_staff" {{if .User.IsStaff}}checked{{end}} class="custom-control-input">
+                            <label class="custom-control-label" for="is_staff">Akses Admin Panel</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" name="is_superuser" id="is_superuser" {{if .User.IsSuperuser}}checked{{end}} class="custom-control-input">
+                            <label class="custom-control-label" for="is_superuser">Superuser (Admin Utama)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-right">
+                    <a href="/admin/users" class="btn btn-default mr-2">Batal</a>
+                    <button type="submit" class="btn btn-primary">Simpan Pengguna</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{end}}

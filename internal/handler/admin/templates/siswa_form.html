@@ -1,0 +1,39 @@
+{{define "content"}}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">{{.Title}}</h3>
+            </div>
+            <form method="POST">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Nama Lengkap Siswa</label>
+                        <input type="text" name="full_name" value="{{.Siswa.FullName}}" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Kelas</label>
+                        <select name="kelas_id" required class="form-control">
+                            {{range .Kelass}}
+                            <option value="{{.ID}}" {{if eq $.Siswa.KelasID .ID}}selected{{end}}>{{.Name}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>NIS (Nomor Induk Siswa)</label>
+                        <input type="text" name="nis" value="{{.Siswa.NIS}}" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>NISN</label>
+                        <input type="text" name="nisn" value="{{.Siswa.NISN}}" class="form-control">
+                    </div>
+                </div>
+                <div class="card-footer text-right">
+                    <a href="/admin/siswa" class="btn btn-default mr-2">Batal</a>
+                    <button type="submit" class="btn btn-primary">Simpan Siswa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{end}}

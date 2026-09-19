@@ -1,0 +1,93 @@
+{{define "content"}}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-7">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">{{.Title}}</h3>
+            </div>
+            <form method="POST">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Hari Aktif</label>
+                        <div class="row">
+                            <div class="col-4 col-md-2">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="senin" id="senin" {{if .Session.Senin}}checked{{end}} class="custom-control-input">
+                                    <label class="custom-control-label" for="senin">Senin</label>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-2">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="selasa" id="selasa" {{if .Session.Selasa}}checked{{end}} class="custom-control-input">
+                                    <label class="custom-control-label" for="selasa">Selasa</label>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-2">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="rabu" id="rabu" {{if .Session.Rabu}}checked{{end}} class="custom-control-input">
+                                    <label class="custom-control-label" for="rabu">Rabu</label>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-2">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="kamis" id="kamis" {{if .Session.Kamis}}checked{{end}} class="custom-control-input">
+                                    <label class="custom-control-label" for="kamis">Kamis</label>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-2">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="jumat" id="jumat" {{if .Session.Jumat}}checked{{end}} class="custom-control-input">
+                                    <label class="custom-control-label" for="jumat">Jumat</label>
+                                </div>
+                            </div>
+                            <div class="col-4 col-md-2">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="sabtu" id="sabtu" {{if .Session.Sabtu}}checked{{end}} class="custom-control-input">
+                                    <label class="custom-control-label" for="sabtu">Sabtu</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Jam Masuk (Mulai)</label>
+                                <input type="text" name="jam_masuk" value="{{.Session.JamMasuk}}" placeholder="07:00" required class="form-control text-monospace">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Jam Pulang (Mulai)</label>
+                                <input type="text" name="jam_keluar_mulai_absen" value="{{.Session.JamKeluarMulaiAbsen}}" placeholder="13:30" class="form-control text-monospace">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Jam Keluar (Batas Akhir)</label>
+                                <input type="text" name="jam_keluar" value="{{.Session.JamKeluar}}" placeholder="14:00" required class="form-control text-monospace">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Pilih Kelas yang Menerapkan Jadwal Ini</label>
+                        <div class="row" style="max-height: 200px; overflow-y: auto; border: 1px solid #ced4da; border-radius: .25rem; padding: .5rem; margin: 0;">
+                            {{range .Kelass}}
+                            <div class="col-6 col-md-4">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" name="kelas_ids" value="{{.ID}}" id="kelas_{{.ID}}" {{if containsUint $.SelectedKelasIDs .ID}}checked{{end}} class="custom-control-input">
+                                    <label class="custom-control-label" for="kelas_{{.ID}}">{{.Name}}</label>
+                                </div>
+                            </div>
+                            {{end}}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-right">
+                    <a href="/admin/sessions" class="btn btn-default mr-2">Batal</a>
+                    <button type="submit" class="btn btn-primary">Simpan Sesi Jadwal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{end}}

@@ -1,0 +1,49 @@
+{{define "content"}}
+<div class="row mb-3">
+    <div class="col-12">
+        <p class="text-muted mb-0">Status kunci absensi per kelas dan tanggal</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body table-responsive p-0">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Kelas</th>
+                    <th>Tanggal</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Kuncis}}
+                <tr>
+                    <td><strong>{{.Kelas.Name}}</strong></td>
+                    <td>{{.Date.Format "02 Jan 2006"}}</td>
+                    <td>
+                        {{if .Locked}}
+                            <span class="badge badge-danger"><i class="fas fa-lock mr-1"></i>Terkunci</span>
+                        {{else}}
+                            <span class="badge badge-success"><i class="fas fa-lock-open mr-1"></i>Terbuka</span>
+                        {{end}}
+                    </td>
+                    <td>
+                        <form method="POST" action="/admin/kunci/toggle" class="d-inline">
+                            <input type="hidden" name="kelas_id" value="{{.KelasID}}">
+                            <input type="hidden" name="date" value="{{.Date.Format "2006-01-02"}}">
+                            <input type="hidden" name="locked" value="{{if .Locked}}false{{else}}true{{end}}">
+                            <button type="submit" class="btn btn-sm {{if .Locked}}btn-outline-success{{else}}btn-outline-danger{{end}}">
+                                {{if .Locked}}Buka Kunci{{else}}Kunci Sekarang{{end}}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {{else}}
+                <tr><td colspan="4" class="text-center text-muted py-4">Belum ada catatan kunci absensi</td></tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{end}}

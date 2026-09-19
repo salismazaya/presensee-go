@@ -1,0 +1,61 @@
+{{define "content"}}
+<div class="row mb-3">
+    <div class="col-sm-6">
+        <p class="text-muted mb-0">Kelola akun wali kelas, sekretaris, kesiswaan, dan guru piket</p>
+    </div>
+    <div class="col-sm-6 text-right">
+        <a href="/admin/users/create" class="btn btn-primary"><i class="fas fa-plus mr-1"></i> Tambah Pengguna</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body table-responsive p-0">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nama &amp; Username</th>
+                    <th>Tipe Akun</th>
+                    <th>Role Kelas</th>
+                    <th>Hak Akses</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .Users}}
+                <tr>
+                    <td>{{.ID}}</td>
+                    <td>
+                        <strong>{{.DisplayName}}</strong><br>
+                        <small class="text-muted">@{{.Username}}</small>
+                    </td>
+                    <td>
+                        {{if .Type}}
+                            <span class="badge badge-primary">{{derefUserType .Type}}</span>
+                        {{else}}
+                            <span class="badge badge-secondary">-</span>
+                        {{end}}
+                    </td>
+                    <td>
+                        {{if .WaliKelas}}
+                            <span class="badge badge-success">Wali: {{.WaliKelas.Name}}</span>
+                        {{end}}
+                        {{range .SekretarisKelas}}
+                            <span class="badge badge-info">Sekretaris: {{.Name}}</span>
+                        {{end}}
+                        {{if and (not .WaliKelas) (eq (len .SekretarisKelas) 0)}}-{{end}}
+                    </td>
+                    <td>
+                        {{if .IsSuperuser}}<span class="badge badge-danger">Superuser</span> {{end}}
+                        {{if .IsStaff}}<span class="badge badge-warning">Staff Admin</span>{{end}}
+                    </td>
+                    <td>
+                        <a href="/admin/users/{{.ID}}/edit" class="btn btn-sm btn-outline-primary">Edit</a>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{end}}
