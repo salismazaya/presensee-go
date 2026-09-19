@@ -5,9 +5,11 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 
 	"presensee/internal/database"
 	"presensee/internal/migration"
+	"presensee/internal/model"
 )
 
 func main() {
@@ -66,8 +68,45 @@ func main() {
 			fmt.Printf("%-8d %-35s %-10s %s\n", s.Version, s.Name, applied, at)
 		}
 
+	case "createsuperuser", "user":
+		if len(os.Args) < 4 {
+			log.Fatalf("Usage: migrate createsuperuser <username> <password>")
+		}
+		username := strings.ToLower(strings.TrimSpace(os.Args[2]))
+		password := os.Args[3]
+
+		var user model.User
+		errUser := db.Where("LOWER(TRIM(username)) = ?", username).First(&user).Error
+		if errUser != nil {
+			user = model.User{
+				Username:    username,
+				FullName:    "Super Administrator",
+				IsSuperuser: true,
+				IsStaff:     true,
+				IsActive:    true,
+			}
+		} else {
+			user.IsSuperuser = true
+			user.IsStaff = true
+			user.IsActive = true
+		}
+		if err := user.SetPassword(password); err != nil {
+			log.Fatalf("set password: %v", err)
+		}
+		if errUser != nil {
+			if err := db.Create(&user).Error; err != nil {
+				log.Fatalf("create user: %v", err)
+			}
+			fmt.Printf("✓ Superuser '%s' created successfully.\n", username)
+		} else {
+			if err := db.Save(&user).Error; err != nil {
+				log.Fatalf("update user: %v", err)
+			}
+			fmt.Printf("✓ Superuser '%s' password updated successfully.\n", username)
+		}
+
 	default:
-		fmt.Fprintf(os.Stderr, "Usage: migrate [up|down [N]|status]\n")
+		fmt.Fprintf(os.Stderr, "Usage: migrate [up|down [N]|status|createsuperuser <user> <pass>]\n")
 		os.Exit(1)
 	}
 }

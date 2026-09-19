@@ -36,7 +36,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	normUsername := strings.ToLower(strings.TrimSpace(req.Username))
 	var user model.User
-	if err := h.DB.Where("LOWER(TRIM(username)) = ? AND is_active = true", normUsername).First(&user).Error; err != nil {
+	if err := h.DB.Where("LOWER(TRIM(username)) = ? AND is_active = ?", normUsername, true).First(&user).Error; err != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusForbidden)
 		json.NewEncoder(w).Encode(map[string]string{"detail": "Username/password salah"})

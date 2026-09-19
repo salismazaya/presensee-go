@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"presensee/internal/database"
 	"presensee/internal/handler/admin"
@@ -130,8 +131,11 @@ func main() {
 			}
 
 			indexPath := filepath.Join(distDir, indexFile)
-			if _, err := os.Stat(indexPath); err == nil {
-				http.ServeFile(w, r, indexPath)
+			if content, err := os.ReadFile(indexPath); err == nil {
+				// Inject base API URL so frontend client knows where to send API requests
+				html := strings.ReplaceAll(string(content), "{{ BASE_API_URL }}", "/api")
+				w.Header().Set("Content-Type", "text/html; charset=utf-8")
+				w.Write([]byte(html))
 				return
 			}
 

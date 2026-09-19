@@ -21,8 +21,8 @@ func (h *AdminHandler) Dashboard(w http.ResponseWriter, r *http.Request) {
 	today := time.Now().Format("2006-01-02")
 
 	h.DB.Model(&model.Siswa{}).Count(&totalSiswa)
-	h.DB.Model(&model.Kelas{}).Where("active = true").Count(&totalKelas)
-	h.DB.Model(&model.User{}).Where("is_active = true").Count(&totalUser)
+	h.DB.Model(&model.Kelas{}).Where("active = ?", true).Count(&totalKelas)
+	h.DB.Model(&model.User{}).Where("is_active = ?", true).Count(&totalUser)
 	h.DB.Model(&model.Absensi{}).Where("date = ?", today).Count(&totalAbsensiToday)
 
 	renderTemplate(w, "dashboard", map[string]any{
@@ -49,7 +49,7 @@ func (h *AdminHandler) UsersList(w http.ResponseWriter, r *http.Request) {
 
 func (h *AdminHandler) UserCreatePage(w http.ResponseWriter, r *http.Request) {
 	var kelass []model.Kelas
-	h.DB.Where("active = true").Find(&kelass)
+	h.DB.Where("active = ?", true).Find(&kelass)
 
 	renderTemplate(w, "user_form", map[string]any{
 		"Title":      "Tambah Pengguna",
@@ -119,7 +119,7 @@ func (h *AdminHandler) UserEditPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var kelass []model.Kelas
-	h.DB.Where("active = true").Find(&kelass)
+	h.DB.Where("active = ?", true).Find(&kelass)
 
 	var selectedKelasID uint
 	if user.WaliKelas != nil {
@@ -380,7 +380,7 @@ func (h *AdminHandler) SiswaList(w http.ResponseWriter, r *http.Request) {
 	q.Find(&siswas)
 
 	var kelass []model.Kelas
-	h.DB.Where("active = true").Find(&kelass)
+	h.DB.Where("active = ?", true).Find(&kelass)
 
 	renderTemplate(w, "siswa_list", map[string]any{
 		"Title":           "Manajemen Siswa",
@@ -394,7 +394,7 @@ func (h *AdminHandler) SiswaList(w http.ResponseWriter, r *http.Request) {
 
 func (h *AdminHandler) SiswaCreatePage(w http.ResponseWriter, r *http.Request) {
 	var kelass []model.Kelas
-	h.DB.Where("active = true").Find(&kelass)
+	h.DB.Where("active = ?", true).Find(&kelass)
 
 	renderTemplate(w, "siswa_form", map[string]any{
 		"Title":      "Tambah Siswa",
@@ -431,7 +431,7 @@ func (h *AdminHandler) SiswaEditPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var kelass []model.Kelas
-	h.DB.Where("active = true").Find(&kelass)
+	h.DB.Where("active = ?", true).Find(&kelass)
 
 	renderTemplate(w, "siswa_form", map[string]any{
 		"Title":      "Edit Siswa: " + siswa.FullName,
@@ -486,7 +486,7 @@ func (h *AdminHandler) AbsensiList(w http.ResponseWriter, r *http.Request) {
 	q.Find(&absensies)
 
 	var kelass []model.Kelas
-	h.DB.Where("active = true").Find(&kelass)
+	h.DB.Where("active = ?", true).Find(&kelass)
 
 	renderTemplate(w, "absensi_list", map[string]any{
 		"Title":           "Monitoring Absensi",
@@ -504,7 +504,7 @@ func (h *AdminHandler) KunciList(w http.ResponseWriter, r *http.Request) {
 	h.DB.Preload("Kelas").Order("date DESC, kelas_id ASC").Find(&kuncis)
 
 	var kelass []model.Kelas
-	h.DB.Where("active = true").Find(&kelass)
+	h.DB.Where("active = ?", true).Find(&kelass)
 
 	renderTemplate(w, "kunci_list", map[string]any{
 		"Title":      "Kunci Absensi",
@@ -551,7 +551,7 @@ func (h *AdminHandler) SessionsList(w http.ResponseWriter, r *http.Request) {
 
 func (h *AdminHandler) SessionCreatePage(w http.ResponseWriter, r *http.Request) {
 	var kelass []model.Kelas
-	h.DB.Where("active = true").Find(&kelass)
+	h.DB.Where("active = ?", true).Find(&kelass)
 
 	renderTemplate(w, "session_form", map[string]any{
 		"Title":      "Tambah Sesi Jadwal QR",
@@ -604,7 +604,7 @@ func (h *AdminHandler) SessionEditPage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var kelass []model.Kelas
-	h.DB.Where("active = true").Find(&kelass)
+	h.DB.Where("active = ?", true).Find(&kelass)
 
 	renderTemplate(w, "session_form", map[string]any{
 		"Title":      "Edit Sesi Jadwal QR",
@@ -715,7 +715,7 @@ func (h *AdminHandler) ImportSiswaPost(w http.ResponseWriter, r *http.Request) {
 
 func (h *AdminHandler) ExportAbsensiPage(w http.ResponseWriter, r *http.Request) {
 	var kelass []model.Kelas
-	h.DB.Where("active = true").Find(&kelass)
+	h.DB.Where("active = ?", true).Find(&kelass)
 
 	renderTemplate(w, "export_absensi", map[string]any{
 		"Title":        "Export Laporan Absensi (.xlsx)",

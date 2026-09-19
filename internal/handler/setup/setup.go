@@ -57,7 +57,7 @@ var setupTemplate = template.Must(template.New("setup").Parse(`
 
 func (h *SetupHandler) SetupPage(w http.ResponseWriter, r *http.Request) {
 	var count int64
-	h.DB.Model(&model.User{}).Where("is_superuser = true").Count(&count)
+	h.DB.Model(&model.User{}).Where("is_superuser = ?", true).Count(&count)
 	if count > 0 {
 		http.Error(w, "Setup sudah dilakukan", http.StatusForbidden)
 		return
@@ -71,7 +71,7 @@ func (h *SetupHandler) SetupPage(w http.ResponseWriter, r *http.Request) {
 
 func (h *SetupHandler) SetupPost(w http.ResponseWriter, r *http.Request) {
 	var count int64
-	h.DB.Model(&model.User{}).Where("is_superuser = true").Count(&count)
+	h.DB.Model(&model.User{}).Where("is_superuser = ?", true).Count(&count)
 	if count > 0 {
 		http.Error(w, "Setup sudah dilakukan", http.StatusForbidden)
 		return

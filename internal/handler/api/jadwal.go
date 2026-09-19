@@ -28,7 +28,7 @@ func (h *JadwalHandler) GetJadwal(w http.ResponseWriter, r *http.Request) {
 	days := []string{"senin", "selasa", "rabu", "kamis", "jumat", "sabtu"}
 
 	var kelass []model.Kelas
-	h.DB.Where("active = true").Find(&kelass)
+	h.DB.Where("active = ?", true).Find(&kelass)
 
 	var sessions []model.AbsensiSession
 	h.DB.Preload("Kelas").Find(&sessions)

@@ -74,7 +74,7 @@ func (h *PiketHandler) PiketUpload(w http.ResponseWriter, r *http.Request) {
 
 			var session model.AbsensiSession
 			errSess := tx.Joins("JOIN absensi_session_kelas ON absensi_session_kelas.absensi_session_id = absensi_sessions.id").
-				Where("absensi_session_kelas.kelas_id = ? AND "+dayCol+" = true", siswa.KelasID).
+				Where("absensi_session_kelas.kelas_id = ? AND "+dayCol+" = ?", siswa.KelasID, true).
 				First(&session).Error
 			if errSess != nil {
 				continue

@@ -35,13 +35,13 @@ func (h *CommonHandler) Me(w http.ResponseWriter, r *http.Request) {
 		switch *user.Type {
 		case model.TypeWaliKelas:
 			var k model.Kelas
-			if err := h.DB.Where("wali_kelas_id = ? AND active = true", user.ID).First(&k).Error; err == nil {
+			if err := h.DB.Where("wali_kelas_id = ? AND active = ?", user.ID, true).First(&k).Error; err == nil {
 				kelasID = &k.ID
 			}
 		case model.TypeSekretaris:
 			var k model.Kelas
 			if err := h.DB.Joins("JOIN kelas_sekretaris ON kelas_sekretaris.kelas_id = kelas.id").
-				Where("kelas_sekretaris.user_id = ? AND kelas.active = true", user.ID).First(&k).Error; err == nil {
+				Where("kelas_sekretaris.user_id = ? AND kelas.active = ?", user.ID, true).First(&k).Error; err == nil {
 				kelasID = &k.ID
 			}
 		}

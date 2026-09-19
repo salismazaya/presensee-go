@@ -18,9 +18,9 @@ func GenerateDump(db *gorm.DB, user *model.User) (string, error) {
 
 	// Query based on role
 	kelasQuery := db.Model(&model.Kelas{}).Where("active = ?", true)
-	siswaQuery := db.Model(&model.Siswa{}).Joins("JOIN kelas ON kelas.id = siswas.kelas_id AND kelas.active = true")
-	absensiQuery := db.Model(&model.Absensi{}).Joins("JOIN siswas ON siswas.id = absensis.siswa_id").Joins("JOIN kelas ON kelas.id = siswas.kelas_id AND kelas.active = true")
-	kunciQuery := db.Model(&model.KunciAbsensi{}).Joins("JOIN kelas ON kelas.id = kunci_absensis.kelas_id AND kelas.active = true").Where("locked = ?", true)
+	siswaQuery := db.Model(&model.Siswa{}).Joins("JOIN kelas ON kelas.id = siswas.kelas_id AND (kelas.active = 1 OR kelas.active = true)")
+	absensiQuery := db.Model(&model.Absensi{}).Joins("JOIN siswas ON siswas.id = absensis.siswa_id").Joins("JOIN kelas ON kelas.id = siswas.kelas_id AND (kelas.active = 1 OR kelas.active = true)")
+	kunciQuery := db.Model(&model.KunciAbsensi{}).Joins("JOIN kelas ON kelas.id = kunci_absensis.kelas_id AND (kelas.active = 1 OR kelas.active = true)").Where("locked = ?", true)
 
 	if user.Type != nil {
 		switch *user.Type {

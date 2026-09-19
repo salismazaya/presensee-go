@@ -90,7 +90,7 @@ func (h *AdminHandler) AdminAuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		var user model.User
-		if err := h.DB.Where("token = ? AND is_active = true AND (is_superuser = true OR is_staff = true)", cookie.Value).First(&user).Error; err != nil {
+		if err := h.DB.Where("token = ? AND is_active = ? AND (is_superuser = ? OR is_staff = ?)", cookie.Value, true, true, true).First(&user).Error; err != nil {
 			http.Redirect(w, r, "/admin/login", http.StatusSeeOther)
 			return
 		}
@@ -111,7 +111,7 @@ func (h *AdminHandler) LoginPost(w http.ResponseWriter, r *http.Request) {
 	password := r.FormValue("password")
 
 	var user model.User
-	if err := h.DB.Where("LOWER(TRIM(username)) = ? AND is_active = true", username).First(&user).Error; err != nil {
+	if err := h.DB.Where("LOWER(TRIM(username)) = ? AND is_active = ?", username, true).First(&user).Error; err != nil {
 		http.Redirect(w, r, "/admin/login?error=Username+atau+password+salah", http.StatusSeeOther)
 		return
 	}

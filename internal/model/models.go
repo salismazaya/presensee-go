@@ -2,11 +2,17 @@ package model
 
 import (
 	"crypto/rand"
+	"crypto/sha256"
+	"crypto/subtle"
+	"encoding/base64"
 	"encoding/hex"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/crypto/pbkdf2"
 	"gorm.io/gorm"
 )
 
@@ -48,6 +54,21 @@ func (u *User) SetPassword(raw string) error {
 }
 
 func (u *User) CheckPassword(raw string) bool {
+	if strings.HasPrefix(u.Password, "pbkdf2_sha256$") {
+		parts := strings.Split(u.Password, "$")
+		if len(parts) == 4 {
+			iter, err := strconv.Atoi(parts[1])
+			if err == nil {
+				salt := parts[2]
+				expectedHash := parts[3]
+				key := pbkdf2.Key([]byte(raw), []byte(salt), iter, 32, sha256.New)
+				computedHash := base64.StdEncoding.EncodeToString(key)
+				if subtle.ConstantTimeCompare([]byte(computedHash), []byte(expectedHash)) == 1 {
+					return true
+				}
+			}
+		}
+	}
 	return bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(raw)) == nil
 }
 
