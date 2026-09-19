@@ -114,7 +114,7 @@ func ProcessSync(db *gorm.DB, user *model.User, payload UploadPayload) (*SyncRes
 		return score(actions[i].Action) < score(actions[j].Action)
 	})
 
-	var conflicts []ConflictInfo
+	conflicts := make([]ConflictInfo, 0)
 
 	err := db.Transaction(func(tx *gorm.DB) error {
 		// Cache in-memory lock state: "YYYY-MM-DD_kelasID" -> locked

@@ -71,7 +71,7 @@ export default function Dashboard() {
 
       if (getStagingDatabase().length > 0) {
         const res = await uploadDatabase(token);
-        res.conflicts.forEach((conflict) => {
+        (res?.conflicts ?? []).forEach((conflict) => {
           insertConflictAbsensi(conflict);
         });
 
@@ -154,10 +154,11 @@ export default function Dashboard() {
         refreshLocalDatabase();
         setLastRefresh(new Date().getTime());
 
-        if (response.conflicts.length == 0) {
+        const conflicts = response?.conflicts ?? [];
+        if (conflicts.length === 0) {
           toast.success("Semua data telah disinkronisasi.");
         } else {
-          response.conflicts.forEach((conflict) => {
+          conflicts.forEach((conflict) => {
             insertConflictAbsensi(conflict);
           });
 
