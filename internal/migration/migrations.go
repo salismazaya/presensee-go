@@ -65,7 +65,7 @@ var Migrations = []Migration{
 		Name:    "create_absensis",
 		Up: `CREATE TABLE IF NOT EXISTS absensis (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			date TEXT NOT NULL,
+			date DATETIME NOT NULL,
 			siswa_id INTEGER NOT NULL REFERENCES siswas(id),
 			_status TEXT NOT NULL,
 			wait_expired_at DATETIME,
@@ -81,7 +81,7 @@ var Migrations = []Migration{
 		Name:    "create_kunci_absensis",
 		Up: `CREATE TABLE IF NOT EXISTS kunci_absensis (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			date TEXT NOT NULL,
+			date DATETIME NOT NULL,
 			kelas_id INTEGER NOT NULL REFERENCES kelas(id),
 			locked INTEGER DEFAULT 1,
 			created_at DATETIME,

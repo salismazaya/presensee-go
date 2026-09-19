@@ -129,6 +129,241 @@ func decompress(length int, resetValue int, getNextValue func(int) int) (string,
 	}
 }
 
+func CompressToBase64(uncompressed string) string {
+	if uncompressed == "" {
+		return ""
+	}
+	res := compress(uncompressed, 6, func(a int) byte {
+		return keyStrBase64[a]
+	})
+	end := len(res) % 4
+	if end > 0 {
+		res += strings.Repeat("=", 4-end)
+	}
+	return res
+}
+
+func compress(uncompressed string, bitsPerChar int, getCharFromInt func(int) byte) string {
+	if uncompressed == "" {
+		return ""
+	}
+
+	contextDictionary := make(map[string]int)
+	contextDictionaryToCreate := make(map[string]bool)
+	contextC := ""
+	contextW := ""
+	contextEnlargeIn := 2
+	contextDictSize := 3
+	contextNumBits := 2
+	var contextData []byte
+	contextDataVal := 0
+	contextDataPosition := 0
+
+	runes := []rune(uncompressed)
+	for ii := 0; ii < len(runes); ii++ {
+		contextC = string(runes[ii])
+		if _, ok := contextDictionary[contextC]; !ok {
+			contextDictionary[contextC] = contextDictSize
+			contextDictSize++
+			contextDictionaryToCreate[contextC] = true
+		}
+
+		contextWC := contextW + contextC
+		if _, ok := contextDictionary[contextWC]; ok {
+			contextW = contextWC
+		} else {
+			if contextDictionaryToCreate[contextW] {
+				firstRune := []rune(contextW)[0]
+				if firstRune < 256 {
+					for i := 0; i < contextNumBits; i++ {
+						contextDataVal = (contextDataVal << 1)
+						if contextDataPosition == bitsPerChar-1 {
+							contextDataPosition = 0
+							contextData = append(contextData, getCharFromInt(contextDataVal))
+							contextDataVal = 0
+						} else {
+							contextDataPosition++
+						}
+					}
+					value := int(firstRune)
+					for i := 0; i < 8; i++ {
+						contextDataVal = (contextDataVal << 1) | (value & 1)
+						if contextDataPosition == bitsPerChar-1 {
+							contextDataPosition = 0
+							contextData = append(contextData, getCharFromInt(contextDataVal))
+							contextDataVal = 0
+						} else {
+							contextDataPosition++
+						}
+						value = value >> 1
+					}
+				} else {
+					value := 1
+					for i := 0; i < contextNumBits; i++ {
+						contextDataVal = (contextDataVal << 1) | value
+						if contextDataPosition == bitsPerChar-1 {
+							contextDataPosition = 0
+							contextData = append(contextData, getCharFromInt(contextDataVal))
+							contextDataVal = 0
+						} else {
+							contextDataPosition++
+						}
+						value = 0
+					}
+					value = int(firstRune)
+					for i := 0; i < 16; i++ {
+						contextDataVal = (contextDataVal << 1) | (value & 1)
+						if contextDataPosition == bitsPerChar-1 {
+							contextDataPosition = 0
+							contextData = append(contextData, getCharFromInt(contextDataVal))
+							contextDataVal = 0
+						} else {
+							contextDataPosition++
+						}
+						value = value >> 1
+					}
+				}
+				contextEnlargeIn--
+				if contextEnlargeIn == 0 {
+					contextEnlargeIn = 1 << contextNumBits
+					contextNumBits++
+				}
+				delete(contextDictionaryToCreate, contextW)
+			} else {
+				value := contextDictionary[contextW]
+				for i := 0; i < contextNumBits; i++ {
+					contextDataVal = (contextDataVal << 1) | (value & 1)
+					if contextDataPosition == bitsPerChar-1 {
+						contextDataPosition = 0
+						contextData = append(contextData, getCharFromInt(contextDataVal))
+						contextDataVal = 0
+					} else {
+						contextDataPosition++
+					}
+					value = value >> 1
+				}
+			}
+
+			contextEnlargeIn--
+			if contextEnlargeIn == 0 {
+				contextEnlargeIn = 1 << contextNumBits
+				contextNumBits++
+			}
+
+			contextDictionary[contextWC] = contextDictSize
+			contextDictSize++
+			contextW = contextC
+		}
+	}
+
+	if contextW != "" {
+		if contextDictionaryToCreate[contextW] {
+			firstRune := []rune(contextW)[0]
+			if firstRune < 256 {
+				for i := 0; i < contextNumBits; i++ {
+					contextDataVal = (contextDataVal << 1)
+					if contextDataPosition == bitsPerChar-1 {
+						contextDataPosition = 0
+						contextData = append(contextData, getCharFromInt(contextDataVal))
+						contextDataVal = 0
+					} else {
+						contextDataPosition++
+					}
+				}
+				value := int(firstRune)
+				for i := 0; i < 8; i++ {
+					contextDataVal = (contextDataVal << 1) | (value & 1)
+					if contextDataPosition == bitsPerChar-1 {
+						contextDataPosition = 0
+						contextData = append(contextData, getCharFromInt(contextDataVal))
+						contextDataVal = 0
+					} else {
+						contextDataPosition++
+					}
+					value = value >> 1
+				}
+			} else {
+				value := 1
+				for i := 0; i < contextNumBits; i++ {
+					contextDataVal = (contextDataVal << 1) | value
+					if contextDataPosition == bitsPerChar-1 {
+						contextDataPosition = 0
+						contextData = append(contextData, getCharFromInt(contextDataVal))
+						contextDataVal = 0
+					} else {
+						contextDataPosition++
+					}
+					value = 0
+				}
+				value = int(firstRune)
+				for i := 0; i < 16; i++ {
+					contextDataVal = (contextDataVal << 1) | (value & 1)
+					if contextDataPosition == bitsPerChar-1 {
+						contextDataPosition = 0
+						contextData = append(contextData, getCharFromInt(contextDataVal))
+						contextDataVal = 0
+					} else {
+						contextDataPosition++
+					}
+					value = value >> 1
+				}
+			}
+			contextEnlargeIn--
+			if contextEnlargeIn == 0 {
+				contextEnlargeIn = 1 << contextNumBits
+				contextNumBits++
+			}
+			delete(contextDictionaryToCreate, contextW)
+		} else {
+			value := contextDictionary[contextW]
+			for i := 0; i < contextNumBits; i++ {
+				contextDataVal = (contextDataVal << 1) | (value & 1)
+				if contextDataPosition == bitsPerChar-1 {
+					contextDataPosition = 0
+					contextData = append(contextData, getCharFromInt(contextDataVal))
+					contextDataVal = 0
+				} else {
+					contextDataPosition++
+				}
+				value = value >> 1
+			}
+		}
+	}
+
+	contextEnlargeIn--
+	if contextEnlargeIn == 0 {
+		contextEnlargeIn = 1 << contextNumBits
+		contextNumBits++
+	}
+
+	// Mark end of stream
+	value := 2
+	for i := 0; i < contextNumBits; i++ {
+		contextDataVal = (contextDataVal << 1) | (value & 1)
+		if contextDataPosition == bitsPerChar-1 {
+			contextDataPosition = 0
+			contextData = append(contextData, getCharFromInt(contextDataVal))
+			contextDataVal = 0
+		} else {
+			contextDataPosition++
+		}
+		value = value >> 1
+	}
+
+	// Flush
+	for {
+		contextDataVal = (contextDataVal << 1)
+		if contextDataPosition == bitsPerChar-1 {
+			contextData = append(contextData, getCharFromInt(contextDataVal))
+			break
+		} else {
+			contextDataPosition++
+		}
+	}
+
+	return string(contextData)
+}
+
 func DecompressFromBase64(compressed string) (string, error) {
 	if compressed == "" {
 		return "", nil
