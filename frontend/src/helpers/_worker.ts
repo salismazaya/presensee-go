@@ -26,10 +26,8 @@ const STATEMENT_POINTERS: Record<number, Statement> = {};
 let STATEMENT_COUNTER = 0;
 
 export async function db_prepare(sql: string, params?: any) {
-  if (!db) {
-    const localDb = await getLocalDatabase();
-    db = localDb.db;
-  }
+  const localDb = (await getLocalDatabase()).db;
+  db = localDb;
   const stmt = db.prepare(sql, params);
   const pointer = ++STATEMENT_COUNTER;
   STATEMENT_POINTERS[pointer] = stmt;

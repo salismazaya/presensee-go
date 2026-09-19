@@ -10,7 +10,7 @@ import { refreshDatabase } from "../helpers/api";
 import useToken from "../hooks/useToken";
 import { toast } from "react-toastify";
 import useGlobalLoading from "../hooks/useGlobalLoading";
-import { getLocalDatabase } from "../helpers/database";
+import { getLocalDatabase, saveDatabaseToOPFS } from "../helpers/database";
 import initSqlJs, { type Database } from "sql.js";
 
 export function DatabaseContextConsumer({ children }: { children: any }) {
@@ -38,6 +38,7 @@ export function DatabaseContextConsumer({ children }: { children: any }) {
         if (!exists) {
           const sql = await refreshDatabase(token);
           db.run(sql);
+          await saveDatabaseToOPFS(db);
         }
 
         setTimeout(() => {

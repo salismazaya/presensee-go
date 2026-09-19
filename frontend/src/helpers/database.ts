@@ -332,6 +332,9 @@ export async function getKelas(data: DatabaseProps) {
 export async function getSiswasKelasName(
   siswasId: number[]
 ): Promise<{ siswa_id: number; kelas_name: string }[]> {
+  if (!siswasId || siswasId.length === 0) {
+    return [];
+  }
   let sql = "SELECT siswa.id as siswa_id, kelas.name as kelas_name FROM siswa ";
   sql += "INNER JOIN kelas ON siswa.kelas_id = kelas.id WHERE ";
   sql += siswasId
